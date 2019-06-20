@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title></title>
+	</head>
+	<body >
+		<h1 class="md-heading">A1</h1>
+		<h2 class="md-heading">B</h2>
+		<h3 class="md-heading">C</h3>
+		<h1 id="xx" class="md-heading" contenteditable="true">A2</h1>
+		<h2 class="md-heading">B1</h2>
+		<h3 class="md-heading">C1</h3>
+		<h3 class="md-heading">C1</h3>
+			
+		<script>
+			
+			window.addEventListener("load", function(evt) {
+				const findPreviousTag=function(tags,index){
+					if(index===0)return null;
+					let tag=tags[index];
+					let findTag=null;
+					for(let i=index;i-- >0;){
+						findTag=tags[i];
+						if(findTag.tagName<tag.tagName){
+							return null;
+						}
+						if(findTag.tagName===tag.tagName){
+							return findTag;
+						}
+					}
+					return null;
+				};
+				
+				
+				const doEachHeadingTag=function(tag,index,tags){
+					const tagName=tag.tagName;
+					let tagChildSeq=1;
+					let tagHeadingMark="";
+					let tagParentHeading=null;
+					let previousTag=findPreviousTag(tags,index);
+					if(previousTag){
+						tagParentHeading=previousTag.parentHeading;
+						tagChildSeq=previousTag.childSeq+1;
+					}else{
+						tagParentHeading=tags[index-1];
+						tagChildSeq=1;
+					}
+					if(tagParentHeading){
+						tagHeadingMark=tagParentHeading.headingMark+"."+tagChildSeq;
+					}else{
+						tagHeadingMark=""+tagChildSeq;
+					}
+					tag.parentHeading=tagParentHeading;
+					tag.headingMark=tagHeadingMark;
+					tag.childSeq=tagChildSeq;
+					
+					const markSpan=document.createElement("span");
+					markSpan.textContent=tagHeadingMark+"、";
+					tag.insertBefore(markSpan,tag.firstChild);
+					
+				};
+				
+				let headingNodes=document.querySelectorAll(".md-heading");
+				
+				for(let i=0;i<headingNodes.length;i++){
+					doEachHeadingTag(headingNodes[i],i,headingNodes);
+				}
+			});
+			
+		
+			
+			
+		</script>
+	</body>
+
+</html>
